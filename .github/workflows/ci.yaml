@@ -18,14 +18,18 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 14
-    - name: Maven Set Version
+    - name: Maven Set Version Snapshot
+      if: contains(github.ref,'*d')  
       run: mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }}-SNAPSHOT && mvn versions:commit
-    - name: Maven Package
+    - name: Maven Set Version Release
+      if: contains(github.ref,'*u') || contains(github.ref,'*h')
+      run: mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }}-RELEASE && mvn versions:commit
+    - name: Maven Package 
       run: mvn -B clean package
     - name: Maven Verify
       run: mvn -B clean verify
     - run: mkdir staging && cp target/*${{ env.RELEASE_VERSION }}-SNAPSHOT*.jar staging
     - uses: actions/upload-artifact@v1
       with:
-        name: Package
+        name: Artifact
         path: staging
