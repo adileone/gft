@@ -28,7 +28,7 @@ jobs:
       run: mvn -B clean package
     - name: Maven Verify
       run: mvn -B clean verify
-    - run: mkdir staging && cp target/*${{ env.RELEASE_VERSION }}-SNAPSHOT*.jar staging
+    - run: mkdir staging && cp target/*${{ env.RELEASE_VERSION }}-*.jar staging
     - uses: actions/upload-artifact@v1
       with:
         name: Artifact
