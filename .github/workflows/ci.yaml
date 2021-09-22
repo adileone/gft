@@ -19,10 +19,10 @@ jobs:
       with:
         java-version: 14
     - name: Maven Set Version Snapshot
-      if: endsWith(github.ref,'d')  
+      if: endsWith(env.RELEASE_VERSION,'d')  
       run: mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }}-SNAPSHOT && mvn versions:commit
     - name: Maven Set Version Release
-      if: endsWith(github.ref,'u') || endsWith(github.ref,'*h')
+      if: endsWith(env.RELEASE_VERSION,'u') || endsWith(env.RELEASE_VERSION,'h')
       run: mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }}-RELEASE && mvn versions:commit
     - name: Maven Package 
       run: mvn -B clean package
