@@ -1,0 +1,32 @@
+name: Carrier Adapter Analytics Feeder CI
+on:
+  push:
+    tags:
+      - '*d'
+      - '*u'
+      - '*h'
+jobs:
+  build_and_test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get version
+      uses: actions/checkout@v2
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+    - name: Set up JDK 14
+      uses: actions/setup-java@v1
+      with:
+        java-version: 14
+    - name: Maven Set Version
+      run: mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }}-SNAPSHOT && mvn versions:commit
+    - name: Maven Package
+      run: mvn -B clean package
+    - name: Maven Verify
+      run: mvn -B clean verify
+    - run: mkdir staging && cp target/*${{ env.RELEASE_VERSION }}-SNAPSHOT*.jar staging
+    - uses: actions/upload-artifact@v1
+      with:
+        name: Package
+        path: staging
